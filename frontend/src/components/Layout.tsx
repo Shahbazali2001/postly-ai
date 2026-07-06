@@ -1,4 +1,3 @@
-
 import { useLocation } from "react-router-dom";
 import { useState } from "react";
 import { Outlet } from "react-router-dom";
@@ -19,6 +18,7 @@ const Layout = () => {
   const pageTitle = pageTitles[location.pathname] || "Postly AI";
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
   return (
     <div className="flex h-screen bg-slate-50">
       {/*Mobile Overlay*/}
@@ -30,14 +30,15 @@ const Layout = () => {
       )}
       <Sidebar isOpen={isMobileMenuOpen} setIsOpen={setIsMobileMenuOpen} />
 
-      <div className="flex flex-1 flex-col overflow-hidden">
+      <div className="flex flex-1 flex-col min-w-0 overflow-hidden">
         {/*Top Bar*/}
         <header className="h-16 bg-white border-b border-slate-200 flex items-center px-4 md:px-8 gap-4">
           <button
-            className="md-hidden p-2 -ml-2 text-slate-500"
-            onClick={() => setIsMobileMenuOpen(true)}
+            className="md:hidden p-2 -ml-2 text-slate-500"
+            onClick={() => setIsMobileMenuOpen((prev) => !prev)}
+            aria-label={isMobileMenuOpen ? "Hide sidebar" : "Show sidebar"}
           >
-            <MenuIcon className="size-6 " />
+            <MenuIcon className="size-6" />
           </button>
 
           <div>

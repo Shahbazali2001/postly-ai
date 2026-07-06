@@ -3,6 +3,7 @@ import { NavLink, useLocation } from "react-router-dom";
 import {
   CalendarDaysIcon,
   LayoutDashboardIcon,
+  LogOutIcon,
   UserIcon,
   Wand2Icon,
 } from "lucide-react";
@@ -40,7 +41,7 @@ const Sidebar = ({
 
   return (
     <div
-      className={`fixed inset-y-0 left-0 w-64 bg-white border-r border-slate-200 flex flex-col h-full transform transition-transform duration-200 ease-in-out md-relative md:translate-x-0 ${isOpen ? "translate-x-0" : "-translate-x-full"}`}
+      className={`fixed inset-y-0 left-0 z-50 w-64 bg-white border-r border-slate-200 flex flex-col h-full transform transition-transform duration-200 ease-in-out md:sticky md:top-0 md:h-screen md:w-64 md:translate-x-0 md:shadow-none md:flex-shrink-0 ${isOpen ? "translate-x-0" : "-translate-x-full"}`}
     >
       {/* Logo */}
       <div className="p-6 pb-4">
@@ -97,6 +98,14 @@ const Sidebar = ({
             <div className="text-xs text-slate-400 truncate">{user?.email}</div>
           </div>
         </div>
+        {/* Logout Button */}
+        <button
+          className="mt-1 flex items-center gap-2 px-3 py-2 w-full rounded text-sm text-slate-500 hover:bg-red-50 hover:text-red-500 transition-all duration-150"
+          onClick={logout}
+        >
+          <LogOutIcon className="size-4" />
+          Sign Out
+        </button>
       </div>
     </div>
   );
