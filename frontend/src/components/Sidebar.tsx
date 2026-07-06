@@ -52,7 +52,7 @@ const Sidebar = ({
 
           return (
             <NavLink
-              className={`flex items-center gap-3 px-3 py-2.5 rounded text-sm transition-all duration-150 ease-in-out hover:bg-slate-50 hover:text-slate-900 hover:shadow-sm hover:shadow-slate-200 ${isActive ? "bg-slate-200 text-slate-900 shadow-sm shadow-slate-100" : "text-slate-500"}`}
+              className={`flex items-center gap-3 px-3 py-2.5 rounded text-sm transition-all duration-150 ease-in-out hover:bg-slate-50 hover:text-slate-900 hover:shadow-sm hover:shadow-red-100 border ${isActive ? "bg-red-50 text-red-600 border-red-100 shadow-sm shadow-slate-100" : "text-slate-500 border-transparent hover:text-slate-700"}`}
               to={item.path}
               key={item.name}
               end={item.path === "/dashboard"}
