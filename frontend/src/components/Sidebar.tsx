@@ -26,6 +26,18 @@ const Sidebar = ({
   // Location
   const location = useLocation();
 
+  // User and Logout
+  const { user, logout } = {
+    logout: () => {
+      window.location.href = "/";
+    },
+
+    user: {
+      name: "John Doe",
+      email: "johndoe@example.com",
+    },
+  };
+
   return (
     <div
       className={`fixed inset-y-0 left-0 w-64 bg-white border-r border-slate-200 flex flex-col h-full transform transition-transform duration-200 ease-in-out md-relative md:translate-x-0 ${isOpen ? "translate-x-0" : "-translate-x-full"}`}
@@ -69,6 +81,23 @@ const Sidebar = ({
           );
         })}
       </nav>
+
+      {/* User Footer */}
+      <div className="p-4 border-t border-slate-100">
+        <div className="flex items-center gap-3 p-2 rounded-xl hover:bg-slate-50 transition-colors">
+          {/* User Avatar */}
+          <div className="size-8 rounded-full bg-linear-to-br from-red-400 to-pink-400 flex items-center justify-center text-white text-sm font-medium shrink-0">
+            {user?.name?.charAt(0).toUpperCase() || "U"}
+          </div>
+          {/* User Name and Mail ID */}
+          <div className="flex-1 min-w-0">
+            <div className="text-sm font-medium text-slate-800 truncate">
+              {user?.name}
+            </div>
+            <div className="text-xs text-slate-400 truncate">{user?.email}</div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
