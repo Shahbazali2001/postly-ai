@@ -127,13 +127,13 @@ const Dashboard = () => {
             {activities.map((activity) => (
               <div
                 key={activity._id}
-                className="flex items-start gap-4 px-6 py-4 hover:bg-slate-50/50 transition-colors"
+                className="flex flex-1 items-center gap-4 px-6 py-4 hover:bg-slate-50/50 transition-colors"
               >
                 <div className="size-9 rounded-xl flex items-center justify-center shrink-0 mt-0.5 bg-zinc-100 text-zinc-600">
                   <SendIcon className="size-6 text-red-500" />
                 </div>
-                <div className="flex min-w-0">
-                  <div className="flex items-center justify-between gap-2 mb-1">
+                <div className="flex flex-row flex-1 gap-15 min-w-0">
+                  <div className="flex items-center justify-between gap-10 mb-1">
                     <span className="text-xs px-2 py-0.5 rounded-full bg-zinc-100 text-zinc-600">
                       Published
                     </span>
