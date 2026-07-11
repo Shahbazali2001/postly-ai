@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { dummyPostsData, PLATFORMS } from "../assets/assets";
 import { XIcon } from "lucide-react";
 
@@ -10,7 +10,9 @@ const Scheduler = () => {
   const [scheduledTime, setScheduledTime] = useState("");
   const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>([]);
   const [mediaFile, setMediaFile] = useState<File | null>(null);
+  const [mediaPreviewUrl, setMediaPreviewUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const mediaInputRef = useRef<HTMLInputElement>(null);
 
   // Fetch posts from dummy data
 
@@ -23,6 +25,21 @@ const Scheduler = () => {
     const interval = setInterval(() => fetchPosts(), 10000);
     return () => clearInterval(interval);
   }, []);
+
+  useEffect(() => {
+    if (!mediaFile) {
+      setMediaPreviewUrl((prevUrl) => {
+        if (prevUrl) URL.revokeObjectURL(prevUrl);
+        return null;
+      });
+      return;
+    }
+
+    const nextPreviewUrl = URL.createObjectURL(mediaFile);
+    setMediaPreviewUrl(nextPreviewUrl);
+
+    return () => URL.revokeObjectURL(nextPreviewUrl);
+  }, [mediaFile]);
 
   // Filter posts published and scheduled
   const scheduled = posts.filter((post: any) => post.status === "scheduled");
@@ -125,18 +142,22 @@ const Scheduler = () => {
 
               {mediaFile ? (
                 <div className="relative rounded-xl overflow-hidden border border-slate-200 bg-slate-50">
-                  {mediaFile.type.startsWith("/image") ? (
+                  {mediaPreviewUrl && mediaFile.type.startsWith("image/") ? (
                     <img
-                      src={URL.createObjectURL(mediaFile)}
+                      src={mediaPreviewUrl}
                       alt="preview"
                       className="w-full h-40 object-cover"
                     />
-                  ) : (
+                  ) : mediaPreviewUrl ? (
                     <video
-                      src={URL.createObjectURL(mediaFile)}
+                      src={mediaPreviewUrl}
                       controls
                       className="w-full h-40 object-cover"
                     />
+                  ) : (
+                    <div className="flex h-40 items-center justify-center text-sm text-slate-500">
+                      Preparing preview...
+                    </div>
                   )}
 
                   {/* Button */}
@@ -150,25 +171,42 @@ const Scheduler = () => {
                 </div>
               ) : (
                 <label
-                  htmlFor=""
+                  htmlFor="media-upload"
+                  onClick={() => mediaInputRef.current?.click()}
                   className="flex items-center justify-center gap-2 p-5 py-10 border-2 border-dashed border-slate-200 rounded-xl cursor-pointer hover:border-red-300 hover:bg-red-50/30 transition-all duration-100 group hover:scale-101"
                 >
                   <span className="text-slate-500 text-sm group-hover:text-red-500 transition-colors">
                     Click to Upload image or video
                   </span>
                   <input
+                    id="media-upload"
+                    ref={mediaInputRef}
                     type="file"
                     accept="image/*, video/*"
                     className="hidden"
-                    onChange={(e) =>
-                      e.target.files?.[0] && setMediaFile(e.target.files[0])
-                    }
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        setMediaFile(file);
+                      }
+                    }}
                   />
                 </label>
               )}
             </div>
 
             {/* Date and Time */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="">
+                <label
+                  htmlFor=""
+                  className="block text-xs text-slate-500 uppercase mb-2"
+                >
+                  Date
+                </label>
+                <div className="relative"></div>
+              </div>
+            </div>
 
             {/* Submit */}
           </form>
