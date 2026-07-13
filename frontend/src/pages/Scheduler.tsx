@@ -307,15 +307,24 @@ const Scheduler = () => {
                       })}
                     </div>
 
-                    {/* After Icon/Post */}
+                    {/* Media Type */}
                     <div className="flex items-center gap-2">
                       {post.mediaType && (
                         <span className="text-xs bg-slate-100 text-slate-600 border border-slate-200 px-1.5 py-0.5 rounded-md font-semibold">
                           {post.mediaType}
                         </span>
                       )}
+                      {/* Date */}
+                      <span className="text-xs text-slate-400">
+                        {new Date(post.scheduledFor).toLocaleString()}
+                      </span>
                     </div>
                   </div>
+
+                  {/*Post Content */}
+                  <p className="text-sm text-slate-500 line-clamp-2 max-w-md">
+                    {post.content}
+                  </p>
                 </div>
               ))
             )}
