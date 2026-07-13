@@ -1,6 +1,12 @@
 import { useState, useEffect, useRef } from "react";
 import { dummyPostsData, PLATFORMS } from "../assets/assets";
-import { XIcon } from "lucide-react";
+import {
+  CalendarIcon,
+  XIcon,
+  ClockIcon,
+  ArrowRightIcon,
+  CalendarDaysIcon,
+} from "lucide-react";
 
 const Scheduler = () => {
   //State Management
@@ -204,17 +210,121 @@ const Scheduler = () => {
                 >
                   Date
                 </label>
-                <div className="relative"></div>
+                <div className="relative">
+                  <CalendarIcon className="size-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
+                  <input
+                    required
+                    value={scheduledDate}
+                    onChange={(e) => setScheduledDate(e.target.value)}
+                    type="date"
+                    className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 text-sm outline-none hover:border-red-300"
+                  />
+                </div>
+              </div>
+
+              {/* Time */}
+
+              <div className="">
+                <label
+                  htmlFor=""
+                  className="block text-xs text-slate-500 uppercase mb-2"
+                >
+                  Time
+                </label>
+                <div className="relative">
+                  <ClockIcon className="size-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
+                  <input
+                    required
+                    value={scheduledTime}
+                    onChange={(e) => setScheduledTime(e.target.value)}
+                    type="time"
+                    className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 text-sm outline-none hover:border-red-300"
+                  />
+                </div>
               </div>
             </div>
 
             {/* Submit */}
+            <div>
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full text-sm flex items-center justify-center gap-2 py-3.5  bg-red-500 hover:bg-red-600 text-white rounded-lg transition-all duration-200"
+              >
+                {loading ? (
+                  <>
+                    <div className="size-4 border-2 border-white border-t-transparent rounded-full animate-spin" />{" "}
+                    Scheduling...
+                  </>
+                ) : (
+                  <>
+                    <div className="flex items-center gap-2">
+                      Schedule Post
+                      <ArrowRightIcon className="size-4" />
+                    </div>
+                  </>
+                )}
+              </button>
+            </div>
           </form>
         </div>
       </div>
 
-      {/* Queue Panel */}
-      <div className=""></div>
+      {/* Queue Panel  Display Published and Scheduled Posts */}
+      <div className="flex-1 flex flex-col gap-6 min-w-0">
+        {/* Upcoming Post */}
+        <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
+          <div className="flex items-center gap-2.5 px-5 py-4 border-b border-slate-100">
+            <CalendarDaysIcon className="size-4 text-zinc-500" />
+            <h3 className="text-slate-900 text-sm">Upcoming</h3>
+            <span className="ml-auto text-xs font-bold bg-zinc-100 text-zinc-700 px-2 py-0.5 rounded-full">
+              {scheduled.length}
+            </span>
+          </div>
+          {/* Upcoming Posts List */}
+          <div className="max-h-72 overflow-y divide-y divide-slate-50">
+            {scheduled.length === 0 ? (
+              <div className="py-10 text-center text-slate-400 text-sm">
+                No Posts Scheduled Yet
+              </div>
+            ) : (
+              scheduled.map((post) => (
+                <div
+                  key={post._id}
+                  className="px-5 py-4 hover:bg-slate-50/60 transition-colors"
+                >
+                  <div className="flex items-center justify-between mb-2">
+                    {/* Icon */}
+                    <div className="flex gap-1.5 items-center">
+                      {post.platforms.map((platform: string) => {
+                        const meta = PLATFORMS.find((p) => p.id === platform);
+                        return meta ? (
+                          <meta.icon
+                            className="size-3.5 text-slate-400"
+                            key={platform}
+                          />
+                        ) : null;
+                      })}
+                    </div>
+
+                    {/* After Icon/Post */}
+                    <div className="flex items-center gap-2">
+                      {post.mediaType && (
+                        <span className="text-xs bg-slate-100 text-slate-600 border border-slate-200 px-1.5 py-0.5 rounded-md font-semibold">
+                          {post.mediaType}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+
+        {/* Upcoming Post */}
+        <div></div>
+      </div>
     </div>
   );
 };
