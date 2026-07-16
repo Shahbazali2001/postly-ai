@@ -2,7 +2,12 @@ import "dotenv/config";
 import express, { Request, Response } from 'express';
 import cors from "cors";
 
+import connectDB from "./config/dbConnection.js";
+
 const app = express();
+
+// Database Connection
+connectDB();
 
 // Middleware
 app.use(cors())
@@ -16,4 +21,6 @@ app.get('/', (_req: Request, res: Response) => {
 
 app.listen(port, () => {
     console.log(`Server is running at http://localhost:${port}`);
+
+
 });
