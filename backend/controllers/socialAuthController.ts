@@ -4,7 +4,7 @@ import { User } from "../models/User.js";
 import { Account } from "../models/Account.js";
 
 //Request Interface
-import { AuthRequest } from "../middlewares/authMiddleware.js";
+import { AuthRequest } from "../interfaces/AuthRequest.js";
 
 
 // Helper to ensue that the user has zernio profile
