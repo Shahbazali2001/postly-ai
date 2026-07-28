@@ -138,7 +138,7 @@ export const getPosts = async (req: AuthRequest, res: Response) : Promise<void> 
 export const schedulePosts = async (req: AuthRequest, res: Response) : Promise<void> => {
     try {
         const {content, platforms, scheduledFor, status} = req.body;
-
+        
 
     } catch (error: unknown) {
         res.status(500).json({
