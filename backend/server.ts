@@ -10,6 +10,8 @@ import { config } from "./config/vConfig.js";
 import authRouter from "./routes/authRoutes.js";
 import socialAuthRouter from "./routes/socialAuthRoutes.js";
 import accountRouter from "./routes/accountRoutes.js";
+import postRouter from "./routes/postRoutes.js";
+
 
 
 // Express App Variables
@@ -28,6 +30,9 @@ app.use("/api/oauth", socialAuthRouter);
 
 // Account Routes
 app.use("/api/accounts", accountRouter);
+
+// Post Routes
+app.use("/api/posts", postRouter);
 
 
 
