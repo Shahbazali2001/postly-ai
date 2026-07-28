@@ -7,6 +7,7 @@ import { cloudinaryUpload } from "../config/cloudinaryConfig.js";
 
 
 
+
 // Generate Post
 // POST /api/post/generate
 // Private
@@ -71,17 +72,20 @@ export const generatePost = async (req: AuthRequest, res: Response) : Promise<vo
 
         const image = `data:image/png;base64,${imageResponse.data}`;
 
-        //Handle Cloudinary Upload
-        const imageUrl = await cloudinaryUpload(image);
+        // Auto-detect type from base64 prefix
+        const fileType: "image" | "video" = image.startsWith("data:video") ? "video" : "image";
+
+        // Handle Cloudinary Upload
+        const mediaUrl = await cloudinaryUpload(image, fileType);
 
         // Save to DB
         const generation = await Generation.create({
-            user : req.user._id,
+            user: req.user._id,
             prompt,
             content,
-            mediaUrl : imageUrl,
-            mediaType : imageUrl ? "image" : undefined,
-            tone
+            mediaUrl,
+            mediaType: fileType,
+            tone,
         });
 
 
@@ -135,14 +139,49 @@ export const getPosts = async (req: AuthRequest, res: Response) : Promise<void> 
 // Schedule Post
 // POST /api/posts
 // Private
-export const schedulePosts = async (req: AuthRequest, res: Response) : Promise<void> => {
-    try {
-        const {content, platforms, scheduledFor, status} = req.body;
-        
+export const schedulePosts = async (req: AuthRequest, res: Response): Promise<void> => {
+  try {
+    const { content, platforms, scheduledFor, status, mediaUrl: bodyMediaUrl, mediaType: bodyMediaType } = req.body;
 
-    } catch (error: unknown) {
-        res.status(500).json({
-            message: error instanceof Error ? error.message : "Server Error"
-        });
+    // Parse platforms if passed as JSON string
+    let parsedPlatforms = platforms;
+    if (typeof platforms === "string") {
+      try {
+        parsedPlatforms = JSON.parse(platforms);
+      } catch (error) {
+        res.status(400).json({ message: "Failed to parse platforms" });
+      }
     }
-}
+
+    let mediaUrl: string | undefined = bodyMediaUrl;
+    let mediaType: "image" | "video" | undefined = bodyMediaType;
+
+    // Case 1: Handle file upload via req.file
+        if ((req as any).file) {
+            const file = (req as any).file;
+            const isVideo = file.mimetype.startsWith("video");
+            mediaType = isVideo ? "video" : "image";
+
+            mediaUrl = await cloudinaryUpload(file.path, mediaType);
+        }
+
+    // Case 2: Handle already-hosted URL from req.body
+    // If no req.file, we just use mediaUrl/mediaType from body
+
+    const post = await Post.create({
+      user: req.user._id,
+      content,
+      platforms: parsedPlatforms,
+      scheduledFor,
+      status,
+      mediaUrl,
+      mediaType,
+    });
+
+    res.status(200).json(post);
+  } catch (error: unknown) {
+    res.status(500).json({
+      message: error instanceof Error ? error.message : "Server Error",
+    });
+  }
+};
