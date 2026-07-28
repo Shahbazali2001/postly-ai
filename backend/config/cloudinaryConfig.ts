@@ -6,15 +6,19 @@ cloudinary.v2.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-export const cloudinaryUpload = async (image: string): Promise<string> => {
+export const cloudinaryUpload = async (
+  file: string,
+  type: "image" | "video" = "image" // default to image
+): Promise<string> => {
   try {
-    const result = await cloudinary.v2.uploader.upload(image, {
+    const result = await cloudinary.v2.uploader.upload(file, {
       folder: "generated-posts",
+      resource_type: type, // 👈 tells Cloudinary what to expect
     });
-    return result.secure_url; // return the hosted URL
+
+    return result.secure_url; // permanent hosted URL
   } catch (error: any) {
     console.error("Cloudinary upload failed:", error);
-    throw new Error("Image upload failed");
+    throw new Error("Upload failed");
   }
 };
-
