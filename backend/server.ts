@@ -11,6 +11,7 @@ import authRouter from "./routes/authRoutes.js";
 import socialAuthRouter from "./routes/socialAuthRoutes.js";
 import accountRouter from "./routes/accountRoutes.js";
 import postRouter from "./routes/postRoutes.js";
+import activityRouter from "./routes/activityRoutes.js";
 
 
 
@@ -33,6 +34,9 @@ app.use("/api/accounts", accountRouter);
 
 // Post Routes
 app.use("/api/posts", postRouter);
+
+// Activity Route
+app.use("/api/activity", activityRouter);
 
 
 
