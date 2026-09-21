@@ -20,11 +20,11 @@ export const initScheduler = () => {
             : [post.platforms];
 
           const accounts = await Account.find({
-            user: post.user,
-            platform: { $in: platforms },
+            user: post.user as any,
+            platform: { $in: platforms } as any,
             status: "connected",
             zernioAccountId: { $exists: true },
-          });
+          } as any);
 
           if (accounts.length === 0) {
             console.log(`No connected accounts found for post ${post._id}`);
@@ -32,7 +32,7 @@ export const initScheduler = () => {
           }
 
           const zernioPlatforms = accounts.map((account) => ({
-            tform: account.platform as any,
+            platform: account.platform as any,
             accountId: account.zernioAccountId!,
           }));
 
@@ -49,17 +49,20 @@ export const initScheduler = () => {
             platforms: zernioPlatforms,
           };
 
-          console.log(`Publishing post ${post._id} to ${zernioPlatforms}`);
+          console.log(
+            `Publishing post ${post._id} to platforms:`,
+            zernioPlatforms,
+          );
 
           const response = await zernio.posts.createPost({ body: payload });
           const publishedPost = (response.data as any)?.post || response.data;
 
           if (!publishedPost) {
-            throw new Error("Failed to publish post");
+            throw new Error("Failed to publish post via Zernio");
           }
 
           console.log(
-            `Post ${publishedPost._id || publishedPost.id} was published successfully`,
+            `Post ${publishedPost._id || publishedPost.id || post._id} was published successfully`,
           );
 
           post.status = "published";
@@ -74,20 +77,21 @@ export const initScheduler = () => {
           });
           await activityLog.save();
         } catch (error: any) {
-          console.error(`Error publishing post ${post._id}: ${error.message}`);
+          console.error(
+            `Error publishing post ${post._id}: ${error?.message || error}`,
+          );
           post.status = "failed";
           await post.save();
         }
       }
 
-      //Statement
       if (postsToPublish.length > 0) {
         console.log(
           `Evaluated ${postsToPublish.length} posts at ${now.toISOString()}`,
         );
       }
     } catch (error) {
-      console.error(error);
+      console.error("Scheduler error:", error);
     }
   });
 
